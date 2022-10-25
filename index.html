@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html style="position:absolute; left:150px; top:133px;" class="no-border" id="onstock-div">
+    <style>
+        body {background-color: powderblue;}
+        h1   {color: rgb(9, 9, 30);
+            font-family: Arial;}
+        html {color: rgb(9, 9, 30); font-family: Arial;} 
+        input, textarea {background-color: #D3D3D3;}
+        select {background-color: #D3D3D3;}
+        button {background-color: #D3D3D3;}
+        
+    </style>
+	<head>
+		<meta charset="UTF-8">
+		<title>STOCK MANAGEMENT</title>
+	</head>
+	<body>
+		<h1>Stock</h1>
+
+        <label><b>Choose a product, how much you will reserve of it, and which warehouse you are taking it from:</b></label>
+        <br> 
+        <br> 
+        <br>
+        <form name="form1" id="form1" action="/action_page.php">
+                <select onchange="showOrigin('change')" name="product" id="product">
+                <option value="" product="selected">Choose product</option>
+                <option value="" chair="selected">Chair</option>
+                <option value="" table="selected">Table</option>
+                <option value="" tent="selected">Tent</option>
+                </select>
+            <br>    
+            <br>
+            <div style="position:absolute; left:150px; top:133px;" class="no-border" id="onstock-div">
+                <label>
+                <input style="background:lightgrey" type="text" name="onstock" id="onstock">
+                On stock<br>
+                </label>
+            </div>
+            <br>
+            <br>
+            <div class="no-border" id="reserve-div">
+                <label>
+                Reserve amount:<br>
+                <input type="text" name="reserve" id="reserve">
+                </label>
+            </div>
+            <br>
+            <br>
+            <p>From which warehouse?</p>
+            <form name="form2" id="form2" action="/action_page.php">
+                <select name="warehouse" id="warehouseNo">
+                <option value="" warehouseNo="selected">Choose warehouse</option>
+                <option value="" warehouse1="selected">Warehouse 1</option>
+                <option value="" warehouse2="selected">Warehouse 2</option>
+                <option value="" warehouse3="selected">Warehouse 3</option>
+                </select>
+            <br>
+            <br>
+            <p>Where will it be used?</p>
+            <form name="form3" id="form3" action="/action_page.php">
+                <select name="room" id="roomNo">
+                <option value="" roomNo="selected">Choose room</option>
+                <option value="" room1="selected">Room 1</option>
+                <option value="" room2="selected">Room 2</option>
+                <option value="" room3="selected">Room 3</option>
+                </select>
+            <br>
+            <br>
+            <br>
+            <input onclick="saveNumbers()" type="submit" value="Save">
+        </form>
+        <br>
+        <br>
+        <button onclick="showTable()">See stock status</button>
+
+        <script>
+        
+
+// Product dropdown
+
+            window.onload = function(){
+                var subjectSel = document.getElementById("warehouseStock");
+                for (var x in subjectObject) {
+                    subjectSel.options[subjectSel.options.length] = new Option(x, x);
+                }
+                subjectSel.onchange = function() {
+                //empty Chapters- and Topics- dropdowns
+                    chapterSel.length = 1;
+                    topicSel.length = 1;
+                //display correct values
+                    for (var y in subjectObject[this.value]) {
+                        topicSel.options[topicSel.options.length] = new Option(y, y);
+                    }
+                }
+                topicSel.onchange = function() {
+                //empty Chapters dropdown
+                    chapterSel.length = 1;
+                //display correct values
+                    var z = subjectObject[subjectSel.value][this.value];
+                    for (var i = 0; i < z.length; i++) {
+                        chapterSel.options[chapterSel.options.length] = new Option(z[i], z[i]);
+                    }
+                }
+            }
+
+// table 
+            function showTable(){
+                var html =`
+                <table style="background-color:powderblue" id="warehouse" class="display" cellspacing="0" width="100%" border="1">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Origin</th>
+                            <th>Warehouse1</th>
+                            <th>Warehouse2</th>  
+                            <th>Warehouse3</th>
+                            <th>Total</th>
+                            <th>Room1</th>
+                            <th>Room2</th>
+                            <th>Room3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="chair">Chair</td>
+                            <td id="chairTotal">1200</td>
+                            <td id="chairwh1">0</td>
+                            <td id="chairwh2">0</td>
+                            <td id="chairwh3">0</td>
+                            <td id="chairtotalleft">0</td>
+                            <td id="chairr1">0</td>
+                            <td id="chairr2">0</td>
+                            <td id="chair23">0</td>
+                        </tr>
+                        <tr>
+                            <td>Table</td>
+                            <td id="tableTotal">500</td>
+                            <td id="tablewh1">sum</td>
+                            <td id="tablewh2">Sum</td>
+                            <td id="tablewh3">Sum</td>
+                            <td id="tabletotalleft">Sum</td>
+                            <td id="tabler1">Sum</td>
+                            <td id="tabler2">Sum</td>
+                            <td id="tabler3">Sum</td>
+                        </tr>
+                        <tr>
+                            <td>Tent</td>
+                            <td id="tentTotal">30</td>
+                            <td id="tentwh1">Sum</td>
+                            <td id="tentwh2">Sum</td>
+                            <td id="tentwh3">Sum</td>
+                            <td id="tenttotalleft">Sum</td>
+                            <td id="tentr1">Sum</td>
+                            <td id="tentr2">Sum</td>
+                            <td id="tentr3">Sum</td>
+                        </tr>
+                    </tbody>
+                </table>
+               `;
+                document.write( html ); 
+            }
+//put in local storage
+            localStorage.setItem("chairTotal", document.warehouse.chairTotal.value);
+            localStorage.setItem("tableTotal", document.warehouse.tableTotal.value);
+            localStorage.setItem("tentTotal", document.warehouse.tentTotal.value);
+
+
+
+// Event listener to see if the evet is even found and it is not.
+            element = document.getElementById("form1");
+            element.addEventListener("change", function(){
+                alert("Product was changed and event is happening");
+            });
+// On stock amount from Stock table: NOT WORKING!            
+            function showOrigin(){
+                if(document.form1.product.value == ("Chair")){
+                    var stock1 = document.getElementById("chairwh1").innerHTML;
+                    var stock2 = document.getElementById("chairwh2").innerHTML;
+                    var stock3 = document.getElementById("chairwh3").innerHTML;
+                    var sum = Number(stock1) + Number(stock2) + Number(stock3);
+                    document.getElementById("onstock").innerHTML = sum;
+                }
+            }   
+
+// Save button - table for stock does not work after this save change:
+    //        function saveNumbers(){
+     //            if(document.form1.product.value == ("Chair") && document.form2.warehouseNo.value == ("Warehouse 1")){
+    //                 let reserve = document.getElementById("reserve").innerHTML;
+    //                 let first = document.getElementById("chairwh1").innerHTML;
+   //                 let sum = reserve + Number(first);
+    //                 document.getElementById("chairwh1").innerHTML = sum; 
+    //             }   //         }else(document.getElementById("form1").value == "Tent"){
+      //       } }else(document.getElementById("form1").value == "Tent"){
+
+
+
+
+//Just a suggestion on how to move data from cells to fields: 
+ //           function insertRows(){
+                // Find a <table> element with id="myTable":
+  //              var table = document.getElementById("data");
+                // Create an empty <tr> element and add it to the bottom position of the table:
+  //              var row = table.insertRow();
+                // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+   //             var cell1 = row.insertCell(0);
+ //              var cell2 = row.insertCell(1);
+   //             var cell3 = row.insertCell(2);
+                // read the values of the fields on page
+  //              var name = document.getElementById('textfield').value;
+   //             var position  = document.getElementById('textfield2').value;
+    //            var salary = document.getElementById('textfield3').value;
+                // Add some text to the new cells:
+   //             cell1.innerHTML = name;
+   //             cell2.innerHTML = position;
+    //            cell3.innerHTML = salary;
+      //      }
+
+        </script>
+    </body>
+</html>
