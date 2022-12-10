@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html style="position:absolute; left:150px; top:133px;" class="no-border" id="onstock-div">
+<html style="position:absolute; left:150px; top:10px; border-radius:10px;" class="no-border" id="onstock-div">
     <style>
         body {background-color: powderblue;}
         h1   {color: rgb(9, 9, 30);
@@ -8,7 +8,31 @@
         input, textarea {background-color: #D3D3D3;}
         select {background-color: #D3D3D3;}
         button {background-color: #D3D3D3;}
-        
+		.topnav {
+		overflow: hidden;
+		background-color: powderblue;
+		}
+
+		.topnav a {
+		float: left;
+		color: black;
+		text-align: center;
+		padding: 14px 16px;
+		text-decoration: none;
+		font-size: 17px;
+		border: 1px solid black;
+		padding: 8px
+		}
+
+		.topnav a:hover {
+		background-color: #D3D3D3;
+		color: black;
+		}
+
+		.topnav a.active {
+		background-color: #D3D3D3;
+		color: Black;
+		}
     </style>
 	<head>
 		<meta charset="UTF-8">
@@ -16,8 +40,14 @@
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>STOCK MANAGEMENT</title>
 		<script src="http://code.jquery.com/jquery-3.6.1.min.js"></script>
+		
 	</head>
 	<body>
+		<div class="topnav">
+			<a class="active" href="project1index.html">Project1</a>
+			<a href="project2.html">Project2</a>
+
+		</div>
 		<h1>Stock</h1>
 
         <label><b>Choose a product, how much you will reserve of it, and which warehouse you are taking it from:</b></label>
@@ -25,10 +55,10 @@
         <br> 
         <br>
         <form name="form1" id="form1">
-                <select name="default" onchange="showOrigin()" id="product">
+                <select name="default" onchange="showTotal()" id="product">
                 <option value="product">Choose product</option>
                 </select>
-            <div style="position:absolute; left:150px; top:133px;" class="no-border" id="onstock-div">
+            <div style="position:absolute; left:150px; top:179px;" class="no-border" id="onstock-div">
                 <label>
                 <input style="background:lightgrey" type="text" name="onstock" id="onstock" readonly>
                 On stock<br>
@@ -64,6 +94,7 @@
         </form>
         <br>
         <p><b>See stock status</b></p>
+
 	    <table style="background-color:powderblue" id="warehouse" class="display" cellspacing="0" width="110%"  border="1">
 			<thead>
 				<tr>
@@ -78,36 +109,7 @@
 					<td>room3</td>
 				</tr>
 			</thead>
-			<tbody>	
-				<tr>
-					<th class = "col-sm-3">
-						<input type = "text" id="product" name="product" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type = "text" id="origin" name="origin" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="warehouse1" name="warehouse1" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="warehouse2" name="warehouse2" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="warehouse3" name="warehouse3" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="total" name="total" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="room1" name="room1" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="room2" name="room2" class="tableControl"/>
-					</th>
-					<th class = "col-sm-3">
-						<input type="text" id="room3" name="room3" class="tableControl"/>
-					</th>
-				</tr>
+			<tbody onoad="loadTable()">	
 			</tbody>
 			<tfoot>		
 				<tr>
@@ -121,6 +123,7 @@
 			</tfoot>	
 		</table>
 		<br>
+		<p>To update stock status please add new products or update old product here. </p>
         <br>
         <button id="addproduct" onclick="addProduct()">Add product</button>
 	    <br>
@@ -147,6 +150,7 @@
 		<br>
 		<input id="save" type="submit2" onclick="addRows()" value="Save">
 		</div>
+		<p>Click refresh to refresh screen after updating old product.</p>
         <script>	
 		</script>
         <script>
@@ -162,6 +166,7 @@
 			document.getElementById("warehouse").innerHTML = text;	
 
 
+
 //ADD PRODUCTS BUTTON AND SHOW MORE FIELDS AND BUTTON FOR ADDING PRODUCT:
 			var x = document.getElementById('additionalbuttons'); 
             x.style.display = "none";
@@ -172,84 +177,134 @@
 
 //SAVE NEW PRODUCT DATA BY ADDING ROWS, entering values and saving to local storage:
 			function addRows(){
-				var product = document.getElementById('productname').value;
-				var origin = document.getElementById('productamount').value;
+				let product = document.getElementById('productname').value;
+				let origin = document.getElementById('productamount').value;
 				if(document.getElementById('productamount').value >= '1'){
-						if(document.getElementById('warehouseNo2').value == 'warehouse1'){
-							var warehouse1 = document.getElementById('productamount').value;		
-							var warehouse2 = "";
-							var warehouse3 = "";
-							var total = "";
-							var room1 = "";
-							var room2 = "";
-							var room3 = "";	
-							const warehouselist ={
+					if(document.getElementById('warehouseNo2').value == 'warehouse1'){
+						var warehouse1 = document.getElementById('productamount').value;		
+						var warehouse2 = "";
+						var warehouse3 = "";
+						var total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+						var room1 = "";
+						var room2 = "";
+						var room3 = "";	
+						const warehouselist ={
 							product: document.getElementById("productname").value,
 							origin: document.getElementById("productamount").value,
 							warehouse1: document.getElementById("productamount").value,
 							warehouse2: "",
 							warehouse3: "",
-							total: "",
+							total: Number(warehouse1) + Number(warehouse2) + Number(warehouse3),
 							room1: "",
 							room2: "",
-							room3: "",
-							}
-//put in local storage
-							localStorage.setItem(product, JSON.stringify(warehouselist));
+							room3: ""
 						}
-						else if(document.getElementById('warehouseNo2').value == 'warehouse2'){
-							var warehouse2 = document.getElementById('productamount').value;
-							var warehouse1 = "";
-							var warehouse3 = "";
-							var total = "";
-							var room1 = "";
-							var room2 = "";
-							var room3 = "";	
-							const warehouselist ={
+//put in local storage
+						localStorage.setItem(product, JSON.stringify(warehouselist));
+					}
+					else if(document.getElementById('warehouseNo2').value == 'warehouse2'){
+						var warehouse2 = document.getElementById('productamount').value;
+						var warehouse1 = "";
+						var warehouse3 = "";
+						var total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+						var room1 = "";
+						var room2 = "";
+						var room3 = "";	
+						const warehouselist ={
 							product: document.getElementById("productname").value,
 							origin: document.getElementById("productamount").value,
 							warehouse1: "",
 							warehouse2: document.getElementById("productamount").value,
 							warehouse3: "",
-							total: "",
+							total: Number(warehouse1) + Number(warehouse2) + Number(warehouse3),
 							room1: "",
 							room2: "",
-							room3: "",
-							}
-//put in local storage
-							localStorage.setItem(product, JSON.stringify(warehouselist));
-	
+							room3: ""
 						}
-						else if(document.getElementById('warehouseNo2').value == 'warehouse3'){
-							var warehouse3 = document.getElementById('productamount').value;
-							var warehouse2 = "";
-							var warehouse1 = "";
-							var total = "";
-							var room1 = "";
-							var room2 = "";
-							var room3 = "";	
-							const warehouselist ={
+//put in local storage
+						localStorage.setItem(product, JSON.stringify(warehouselist));
+
+					}
+					else if(document.getElementById('warehouseNo2').value == 'warehouse3'){
+						var warehouse3 = document.getElementById('productamount').value;
+						var warehouse2 = "";
+						var warehouse1 = "";
+						var total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+						var room1 = "";
+						var room2 = "";
+						var room3 = "";	
+						const warehouselist ={
 							product: document.getElementById("productname").value,
 							origin: document.getElementById("productamount").value,
 							warehouse1: "",
 							warehouse2: "",
 							warehouse3: document.getElementById("productamount").value,
-							total: "",
+							total: Number(warehouse1) + Number(warehouse2) + Number(warehouse3),
 							room1: "",
 							room2: "",
-							room3: "",
-							}
-//put in local storage		
-							localStorage.setItem(product, JSON.stringify(warehouselist));
+							room3: ""
 						}
+//put in local storage		
+						localStorage.setItem(product, JSON.stringify(warehouselist));
+					}
 				}else{
 					alert('value under 1!');
 				}	
 //Add to warehouse table as last
+				let table = document.getElementById("warehouse");
+				let lastRowIndex = table.rows.length;
+				let cellCount = table.rows[0].cells.length; 
+//Add rows
+				let rows = table.insertRow(lastRowIndex);
+//Add td elements to the new tr element
+				let cell1 = rows.insertCell(0);
+				let cell2 = rows.insertCell(1);
+				let cell3 = rows.insertCell(2);
+				let cell4 = rows.insertCell(3);
+				let cell5 = rows.insertCell(4);
+				let cell6 = rows.insertCell(5);
+				let cell7 = rows.insertCell(6);
+				let cell8 = rows.insertCell(7);
+				let cell9 = rows.insertCell(8);
+//Cell names
+				cell1.innerHTML = product;
+				cell2.innerHTML = origin;
+				cell3.innerHTML = warehouse1;
+				cell4.innerHTML = warehouse2;
+				cell5.innerHTML = warehouse3;
+				cell6.innerHTML = total;
+				cell7.innerHTML = room1;
+				cell8.innerHTML = room2;
+				cell9.innerHTML = room3;
+			}	
+//Load productdropdown only works without function:
+//first get all keys				
+			for (var i = 0; i < localStorage.length; i++) {
+				var key = localStorage.key(i);
+				var value = localStorage.getItem(key);  				
+//then use the keys to make options to the dropdown	
+				let option = document.createElement('option');
+				option.value = key;
+				option.innerHTML = key;	
+				let select = document.getElementById('product');
+				select.appendChild(option);	
+				
+//Direct download of table from local storage:
+//First get all the values:
+				let product = key;
+				let origin = ('origin: ',JSON.parse(localStorage.getItem(key)).origin);
+				let warehouse1 = ('warehouse1: ',JSON.parse(localStorage.getItem(key)).warehouse1);
+				let warehouse2 = ('warehouse2: ',JSON.parse(localStorage.getItem(key)).warehouse2);
+				let warehouse3 = ('warehouse3: ',JSON.parse(localStorage.getItem(key)).warehouse3);
+				let total = ('total: ',JSON.parse(localStorage.getItem(key)).total);
+				let room1 = ('room1: ',JSON.parse(localStorage.getItem(key)).room1);
+				let room2 = ('room2: ',JSON.parse(localStorage.getItem(key)).room2);
+				let room3 = ('room3: ',JSON.parse(localStorage.getItem(key)).room3);
+//add to warehouse table as last
 				var table = document.getElementById("warehouse");
 				var lastRowIndex = table.rows.length;
-				var cellCount = table.rows[0].cells.length; 
-//Add rows
+				var cellCount = table.rows[0].cells.length;
+//create rows in table <tr></tr> rows in table		
 				var rows = table.insertRow(lastRowIndex);
 //Add td elements to the new tr element
 				var cell1 = rows.insertCell(0);
@@ -271,197 +326,128 @@
 				cell7.innerHTML = room1;
 				cell8.innerHTML = room2;
 				cell9.innerHTML = room3;
-			}	
-//LOAD productdropdown only works without function:
-//first get all keys				
-				for (var i = 0; i < localStorage.length; i++) {
-					var key = localStorage.key(i);
-					var value = localStorage.getItem(key);  				
-//then use the keys to make options to the dropdown	
-					let option = document.createElement('option');
-					option.value = key;
-					option.innerHTML = key;	
-					let select = document.getElementById('product');
-					select.appendChild(option);	
-				}
-
-//New try for direct download of table:
-//First get all the values:
-					var value = localStorage.getItem(key); 
-					const object2 = JSON.parse(value);
-					for ( i = 0; i<product.length; i ++) {
-//Make first line in table with loop
-						let text2 = "<table border='1'>";
-						for (const x in object2) {
-							text2 += "<tr><td>" + x + "</td></tr>";
-						}
-						text2 += "</table>"		
-					}	
-					document.getElementById("warehouse").value = text;
-
+			}
 
 // Available on stock amount when product chosen      
-            function showOrigin(){
-				if (localStorage.getItem(key) != null) {
-					for (var i = 0; i < localStorage.length; i++) {
-						var key = localStorage.key(i);
-						var value = localStorage.getItem(key);  
-						var table = document.getElementById("warehouse");
-						var stock1 = document.getElementById("warehouse1").innerHTML
-						var stock2 = document.getElementById("warehouse2").innerHTML; 
-						var stock3 = document.getElementById("warehouse3").innerHTML; 
-						var sum = Number(stock1) + Number(stock2) + Number(stock3);
-						document.getElementById("total").innerHTML = sum;
-						document.getElementById('warehouse').innerHTML = table;
+			function showTotal(){
+				for (var i = 0; i < localStorage.length; i++) {
+					var key = localStorage.key(i);
+					var value = localStorage.getItem(key);  
+					let total = ('total: ',JSON.parse(localStorage.getItem(key)).total);
+					if (document.getElementById("product").value == key) {
+						document.getElementById("onstock").value = total;
 						console.log("It works");
+					}else{
+					//	alert('Please choose a product!');
 					}
-		        }else{
-		            alert('Please choose a product!');
-                }
-           }   
-
+				}   
+			}	
 // Save button - saves changes to table stocks: count total, rooms and warehouses
             function calculations(){
-				if (localStorage.getItem("warehouselist") != null) {
-					var rows = JSON.parse(localStorage.getItem(key));
-					var table = document.getElementById("warehouse");
-					if(document.getElementById('product').value == key){
+				for (var i = 0; i < localStorage.length; i++) {
+					var key = localStorage.key(i);
+					var value = localStorage.getItem(key); 
+					let product = key;
+					let origin = ('origin: ',JSON.parse(localStorage.getItem(key)).origin);
+					let warehouse1 = ('warehouse1: ',JSON.parse(localStorage.getItem(key)).warehouse1);
+					let warehouse2 = ('warehouse2: ',JSON.parse(localStorage.getItem(key)).warehouse2);
+					let warehouse3 = ('warehouse3: ',JSON.parse(localStorage.getItem(key)).warehouse3);
+					let total = ('total: ',JSON.parse(localStorage.getItem(key)).total);
+					let room1 = ('room1: ',JSON.parse(localStorage.getItem(key)).room1);
+					let room2 = ('room2: ',JSON.parse(localStorage.getItem(key)).room2);
+					let room3 = ('room3: ',JSON.parse(localStorage.getItem(key)).room3);
+					var reserve = document.getElementById('reserve').value;	
+					if (document.getElementById("product").value == key) {
 						if(document.getElementById('warehouseNo').value == 'warehouse1'){
-							if(document.getElementById('roomNo').value == 'room1'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var room1 = document.getElementById('room1').innerHTML;
-								document.getElementById('warehouse1').innerHTML = (Number(stock1) - Number(reserve));	
-								document.getElementById('room1').innerHTML = (Number(room1) + Number(reserve));
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								document.getElementById('total').innerHTML = Number(stock1) + Number(stock2) + Number(stock3);				
-							}else if(document.getElementById('roomNo').value == 'room2'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var room1 = document.getElementById('room2').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse1').innerHTML = minus; 
-								document.getElementById('room2').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-							}else if(document.getElementById('roomNo').value == 'room3'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var room1 = document.getElementById('room3').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse1').innerHTML = minus; 
-								document.getElementById('room3').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-								document.getElementById('warehouse').innerHTML = table;
+							if(document.getElementById('roomNo').value == 'room1' && warehouse1 !=0){
+								warehouse1 = (Number(warehouse1) - Number(reserve));	
+								room1 = (Number(room1) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);				
+							}else if(document.getElementById('roomNo').value == 'room2' && warehouse1 !=0){
+								warehouse1 = (Number(warehouse1) - Number(reserve));	
+								room2 = (Number(room2) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);	
+							}else if(document.getElementById('roomNo').value == 'room3' && warehouse1 !=0){
+								warehouse1 = (Number(warehouse1) - Number(reserve));	
+								room3 = (Number(room3) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
 							}else{
-								alert('Please fill in all fields!');
+								alert('Please fill in all fields or check that there is stock in the chosen warehouse!');
 							}       
 						}else if(document.getElementById('warehouseNo').value == 'warehouse2'){
-							if(document.getElementById('roomNo').value == 'room1'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse2').innerHTML;
-								var room1 = document.getElementById('room1').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse2').innerHTML = minus; 
-								document.getElementById('room1').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-							}else if(document.getElementById('roomNo').value == 'room2'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse2').innerHTML;
-								var room1 = document.getElementById('room2').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse2').innerHTML = minus; 
-								document.getElementById('room2').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-							}else if(document.getElementById('roomNo').value == 'room3'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse2').innerHTML;
-								var room1 = document.getElementById('room3').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse2').innerHTML = minus; 
-								document.getElementById('room3').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-								document.getElementById('warehouse').innerHTML = table;
+							if(document.getElementById('roomNo').value == 'room1' && warehouse2 !=0){
+								warehouse2 = (Number(warehouse2) - Number(reserve));	
+								room1 = (Number(room1) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+							}else if(document.getElementById('roomNo').value == 'room2' && warehouse2 !=0){
+								warehouse2 = (Number(warehouse2) - Number(reserve));	
+								room2 = (Number(room2) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+							}else if(document.getElementById('roomNo').value == 'room3' && warehouse2 !=0){
+								warehouse2 = (Number(warehouse2) - Number(reserve));	
+								room3 = (Number(room3) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
 							}else{
-								alert('Please fill in all fields!');   
+								alert('Please fill in all fields or check that there is stock in the chosen warehouse!');   
 							}	  
 						}else if(document.getElementById('warehouseNo').value == 'warehouse3'){
-							if(document.getElementById('roomNo').value == 'room1'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse3').innerHTML;
-								var room1 = document.getElementById('room1').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse3').innerHTML = minus; 
-								document.getElementById('room1').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTMLe;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-							}else if(document.getElementById('roomNo').value == 'room2'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse3').innerHTML;
-								var room1 = document.getElementById('room2').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse3').innerHTML = minus; 
-								document.getElementById('room2').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-							}else if(document.getElementById('roomNo').value == 'room3'){
-								var reserve = document.getElementById('reserve').value;
-								var stock1 = document.getElementById('warehouse3').innerHTML;
-								var room1 = document.getElementById('room3').innerHTML;
-								var plus = Number(room1) + Number(reserve);
-								var minus = Number(stock1) - Number(reserve);	
-								document.getElementById('warehouse3').innerHTML = minus; 
-								document.getElementById('room3').innerHTML = plus;
-								var stock1 = document.getElementById('warehouse1').innerHTML;
-								var stock2 = document.getElementById('warehouse2').innerHTML;
-								var stock3 = document.getElementById('warehouse3').innerHTML;
-								var sum = Number(stock1) + Number(stock2) + Number(stock3);
-								document.getElementById('total').innerHTML = sum;
-								document.getElementById('warehouse').innerHTML = table;
+							if(document.getElementById('roomNo').value == 'room1' && warehouse3 !=0){
+								warehouse3 = (Number(warehouse2) - Number(reserve));	
+								room1 = (Number(room1) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+							}else if(document.getElementById('roomNo').value == 'room2' && warehouse3 !=0){
+								warehouse3 = (Number(warehouse2) - Number(reserve));	
+								room2 = (Number(room2) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
+							}else if(document.getElementById('roomNo').value == 'room3' && warehouse3 !=0){
+								warehouse3 = (Number(warehouse2) - Number(reserve));	
+								room3 = (Number(room3) + Number(reserve));
+								total = Number(warehouse1) + Number(warehouse2) + Number(warehouse3);
 							}else{
-								alert('Please fill in all fields!');
+								alert('Please fill in all fields or check that there is stock in the chosen warehouse!');
 							}       
 						}else{
 							alert('Please fill in all fields');
 						}
-// put into local storage						
-						for (var i = 0; i < warehouselist.length; i++){
-                    		console.log(localStorage.key(i) + ": " + localStorage.setItem(localStorage.key(i)));
+						const warehouselist ={
+							product: product,
+							origin: origin,
+							warehouse1: warehouse1,
+							warehouse2: warehouse2,
+							warehouse3: warehouse3,
+							total: total,
+							room1: room1,
+							room2: room2,
+							room3: room3
 						}
+// put into local storage
+						localStorage.setItem(product, JSON.stringify(warehouselist));
+//Add to warehouse table as last
+						let table = document.getElementById("warehouse");
+						let lastRowIndex = table.rows.length;
+						let cellCount = table.rows[0].cells.length; 
+//Add rows
+						let rows = table.insertRow(lastRowIndex);
+//Add td elements to the new tr element
+						let cell1 = rows.insertCell(0);
+						let cell2 = rows.insertCell(1);
+						let cell3 = rows.insertCell(2);
+						let cell4 = rows.insertCell(3);
+						let cell5 = rows.insertCell(4);
+						let cell6 = rows.insertCell(5);
+						let cell7 = rows.insertCell(6);
+						let cell8 = rows.insertCell(7);
+						let cell9 = rows.insertCell(8);
+		//Cell names
+						cell1.innerHTML = product;
+						cell2.innerHTML = origin;
+						cell3.innerHTML = warehouse1;
+						cell4.innerHTML = warehouse2;
+						cell5.innerHTML = warehouse3;
+						cell6.innerHTML = total;
+						cell7.innerHTML = room1;
+						cell8.innerHTML = room2;
+						cell9.innerHTML = room3;
 					}
 				}	
 			}		
